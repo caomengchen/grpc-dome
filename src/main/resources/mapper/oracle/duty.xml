@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.duty">
+    <!--表名 -->
+    <sql id="table">
+        TC_DUTY
+    </sql>
+
+    <!-- 字段 -->
+    <sql id="colum">
+        DUTY,
+        DUTY_NAME,
+        DUTY_TYPE,
+        DUTY_TYPE_NAME,
+        YEAR,
+        START_DATE,
+        END_DATE,
+        APPOINTED_TYPE,
+        FINANCING_INFO,
+        DUTY_SOURCE,
+        PERSON_ID,
+        BIZ_FLOW_NO,
+        IS_CORPORATION,
+        PERSON_TYPE,
+        UUID,
+        CGBL,
+        CZJE
+    </sql>
+
+    <insert id="addPerSonInfo" parameterType="com.ctd.bank.business.model.PeopleDutyModel">
+        INSERT INTO
+        <include refid="table"></include>
+        (
+        <include refid="colum"></include>
+        )
+        values (
+        #{duty},
+        #{dutyName},
+        #{dutyType},
+        #{dutyTypeName},
+        #{year},
+        #{startDate},
+        #{endDate},
+        #{appointedType},
+        #{financingInfo},
+        #{dutySource},
+        #{personId},
+        #{bizFlowNo},
+        #{isCorporation},
+        #{personType},
+        #{uuid},
+        #{cgbl},
+        #{czje}
+        )
+    </insert>
+
+    <select id="selectByDutyAndFlowNo" parameterType="com.ctd.bank.business.model.PeopleDutyModel" resultType="com.ctd.bank.business.model.PeopleDutyModel">
+    	SELECT 
+			T.*, TP.*
+    	FROM 
+    		TC_DUTY T LEFT JOIN TC_PERSON_POOL TP ON T.PERSON_ID = TP.ID
+    	WHERE 1 = 1	 AND T.DUTY = #{duty} AND T.BIZ_FLOW_NO = #{bizFlowNo}
+    </select>
+
+    <select id="selectByDutysAndFlowNo" parameterType="com.ctd.bank.business.model.PeopleDutyModel" resultType="com.ctd.bank.business.model.PeopleDutyModel">
+        SELECT
+        DISTINCT TP.NAME,TP.IDCARD_NO
+        FROM
+        TC_DUTY T LEFT JOIN TC_PERSON_POOL TP ON T.PERSON_ID = TP.ID
+        WHERE 1 = 1	 AND
+        T.DUTY in
+        <foreach item="duty" index="index" collection="dutys"
+                 open="(" separator="," close=")">
+            #{duty}
+        </foreach>
+        AND T.BIZ_FLOW_NO = #{bizFlowNo}
+    </select>
+
+
+    <select id="selectByFlowNo" parameterType="java.lang.String" resultType="com.ctd.bank.business.model.PeopleDutyModel">
+    	SELECT 
+			T.*, TP.IDCARD_TYPE, TP.IDCARD_NO, TP.NAME, TP.PHONE, TP.ADDRESS
+    	FROM 
+    		TC_DUTY T LEFT JOIN TC_PERSON_POOL TP ON T.PERSON_ID = TP.ID
+    	WHERE 1 = 1 AND T.BIZ_FLOW_NO = #{_parameter} and T.duty &lt;&gt; '09'
+    </select>
+    
+    <update id="updateTzrInfo" parameterType="com.ctd.bank.business.model.PeopleDutyModel">
+    	UPDATE TC_DUTY 
+    		SET 
+		    	FINANCING_INFO=#{financingInfo}, 
+		    	PERSON_TYPE=#{personType}, 
+		    	END_DATE=#{endDate},
+		    	CZJE = #{czje},
+		    	CGBL = #{cgbl}
+    		WHERE ID = #{id}
+    </update>
+    
+    <update id="updateJbrInfo" parameterType="com.ctd.bank.business.model.PeopleDutyModel">
+    	UPDATE TC_DUTY 
+    		SET 
+		    	START_DATE = DATE_FORMAT(NOW(),'%Y-%m-%d'),
+		    	END_DATE=#{endDate}
+    		WHERE ID = #{id}
+    </update>
+    
+    <select id="getJsList" resultType="com.ctd.bank.business.model.PeopleDutyModel" parameterType="java.lang.String">
+    	SELECT T.* , TP.NAME,TP.IDCARD_NO FROM TC_DUTY T LEFT JOIN TC_PERSON_POOL TP ON T.PERSON_ID = TP.ID WHERE 1 = 1 AND T.DUTY = '02' AND T.BIZ_FLOW_NO = #{_parameter}
+    </select>
+    
+    <select id="getDsList" resultType="com.ctd.bank.business.model.PeopleDutyModel" parameterType="java.lang.String">
+    	SELECT T.* , TP.NAME,TP.IDCARD_NO FROM TC_DUTY T LEFT JOIN TC_PERSON_POOL TP ON T.PERSON_ID = TP.ID WHERE 1 = 1 AND T.DUTY = '01' AND T.BIZ_FLOW_NO = #{_parameter}
+    </select>
+    
+    <select id="getConnectPerson" resultType="com.ctd.bank.business.model.PeopleDutyModel" parameterType="java.lang.String">
+    	SELECT T.* , TP.NAME,TP.IDCARD_NO FROM TC_DUTY T LEFT JOIN TC_PERSON_POOL TP ON T.PERSON_ID = TP.ID WHERE 1 = 1 AND T.DUTY = '05' AND T.BIZ_FLOW_NO = #{_parameter}
+    </select>
+
+
+    <select id="getSecretary" resultType="com.ctd.bank.business.model.PeopleDutyModel" parameterType="java.lang.String">
+    	SELECT T.* , TP.NAME,TP.IDCARD_NO FROM TC_DUTY T LEFT JOIN TC_PERSON_POOL TP ON T.PERSON_ID = TP.ID WHERE 1 = 1 AND T.DUTY = '10' AND T.BIZ_FLOW_NO = #{_parameter}
+    </select>
+    
+    <select id="getFinancePerson" resultType="com.ctd.bank.business.model.PeopleDutyModel" parameterType="java.lang.String">
+    	SELECT T.* , TP.NAME,TP.IDCARD_NO FROM TC_DUTY T LEFT JOIN TC_PERSON_POOL TP ON T.PERSON_ID = TP.ID WHERE 1 = 1 AND T.DUTY = '04' AND T.BIZ_FLOW_NO = #{_parameter}
+    </select>
+    
+    <select id="getManagerPerson" resultType="com.ctd.bank.business.model.PeopleDutyModel" parameterType="java.lang.String">
+    	SELECT T.* , TP.NAME,TP.IDCARD_NO FROM TC_DUTY T LEFT JOIN TC_PERSON_POOL TP ON T.PERSON_ID = TP.ID WHERE 1 = 1 AND T.DUTY = '03' AND T.BIZ_FLOW_NO = #{_parameter}
+    </select>
+
+	<delete id="deletePeople" parameterType="com.ctd.bank.business.model.PeopleDutyModel">
+		DELETE FROM TC_DUTY where BIZ_FLOW_NO = #{bizFlowNo} and PERSON_ID = #{personId}
+	</delete>
+
+    <delete id="deleteDutyById" parameterType="com.ctd.bank.business.model.PeopleDutyModel">
+		DELETE FROM TC_DUTY where ID = #{id}
+	</delete>
+
+    <delete id="delete" parameterType="java.lang.String">
+		DELETE FROM TC_DUTY where BIZ_FLOW_NO = #{_parameter} AND DUTY IN ('01','02','03','04','05','10')
+	</delete>   
+	
+	<update id="updateInfo" parameterType="com.ctd.bank.business.model.PeopleDutyModel">
+		UPDATE TC_DUTY 
+    		SET 
+		    	DUTY_TYPE=#{dutyType}, 
+		    	YEAR = #{year}, 
+		    	APPOINTED_TYPE=#{appointedType},
+		    	DUTY_SOURCE=#{dutySource}
+    		WHERE ID = #{id}
+	</update>
+	
+	<delete id="delDutyByBizNo" parameterType="java.lang.String">
+		DELETE FROM TC_DUTY where BIZ_FLOW_NO = #{_parameter}
+	</delete>  
+
+	<!--个体 经营者 -->
+    <select id="getBusinessPerson" resultType="com.ctd.bank.business.model.PeopleDutyModel" parameterType="java.lang.String">
+    	SELECT T.* , TP.* FROM TC_DUTY T LEFT JOIN TC_PERSON_POOL TP ON T.PERSON_ID = TP.ID WHERE T.DUTY = '08' AND T.BIZ_FLOW_NO = #{_parameter}
+    </select>
+    
+	<!-- 经办人 -->
+    <select id="getAgent" resultType="com.ctd.bank.business.model.PeopleDutyModel" parameterType="java.lang.String">
+    	SELECT T.* , TP.* FROM TC_DUTY T LEFT JOIN TC_PERSON_POOL TP ON T.PERSON_ID = TP.ID WHERE T.DUTY = '06' AND T.BIZ_FLOW_NO = #{_parameter}
+    </select>
+    
+    <select id="isTzPersonByBizIdAndDuty" parameterType="com.ctd.bank.business.model.PeopleDutyModel" resultType="com.ctd.bank.business.model.PeopleDutyModel">
+		select * from tc_duty  where BIZ_FLOW_NO = #{bizFlowNo} and PERSON_ID = #{personId}
+    </select>
+    
+    <!-- 查询从业人数 -->
+    <select id="selectCyrs" parameterType="java.lang.String" resultType="com.ctd.bank.business.model.PeopleDutyModel">
+		select  person_id,count(*) from tc_duty  where biz_flow_no = #{_parameter} group by person_id
+    </select>
+    
+   	<update id="updateJyz" parameterType="com.ctd.bank.business.model.PeopleDutyModel">
+		UPDATE TC_DUTY 
+    		SET 
+    		    PERSON_TYPE=#{personType}, 
+		    	PERSON_ID=#{personId}
+    		WHERE BIZ_FLOW_NO = #{bizFlowNo} and DUTY = '08'
+	</update>
+    
+   	<update id="updateBsqr" parameterType="com.ctd.bank.business.model.PeopleDutyModel">
+		UPDATE TC_DUTY 
+    		SET 
+		    	PERSON_ID=#{personId}
+    		WHERE BIZ_FLOW_NO = #{bizFlowNo} and DUTY = '09'
+	</update>
+
+    <select id="selectTzr" parameterType="String" resultType="Map">
+    	SELECT
+			TP.`NAME` 'name',TP.IDCARD_NO 'idcardNo',T.CZJE 'czje',T.CGBL 'cgbl',T.id,TP.id 'personId',TP.PERSON_TYPE 'personType',TP.ADDRESS 'address',TP.SEX 'sex',TP.PHOTO 'photo',TP.PHONE 'phone',TP.CARD_END_DATE 'cardEndDate',TP.CARD_START_DATE 'cardStartDate'
+    	FROM
+    		TC_DUTY T LEFT JOIN TC_PERSON_POOL TP ON T.PERSON_ID = TP.ID
+    	WHERE 1 = 1	 AND T.DUTY = '07' AND T.BIZ_FLOW_NO = #{applyId}
+    </select>
+
+
+    <select id="selectDutyById" parameterType="com.ctd.bank.business.model.PeopleDutyModel" resultType="com.ctd.bank.business.model.PeopleDutyModel">
+    	SELECT * FROM TC_DUTY T WHERE  T.DUTY = #{duty} AND T.id = #{id}
+    </select>
+
+    <select id="selectByPersonId" parameterType="com.ctd.bank.business.model.PeopleDutyModel" resultType="com.ctd.bank.business.model.PeopleDutyModel">
+    	SELECT
+			*
+    	FROM
+    		TC_DUTY T LEFT JOIN TC_PERSON_POOL TP ON T.PERSON_ID = TP.ID
+    	WHERE 1 = 1	 AND T.DUTY = #{duty} AND T.PERSON_ID = #{personId}
+    </select>
+
+</mapper>

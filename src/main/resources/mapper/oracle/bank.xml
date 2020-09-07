@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bank">
+
+    <select id="queryByDutyAndFlowNo" parameterType="com.ctd.bank.business.model.PeopleDutyModel" resultType="com.ctd.bank.business.model.PeopleDutyModel">
+        SELECT
+        T.ID,
+        T.DUTY,
+        T.DUTY_NAME,
+        T.DUTY_TYPE,
+        T.DUTY_TYPE_NAME,
+        T.YEAR,
+        T.START_DATE,
+        T.END_DATE,
+        T.APPOINTED_TYPE,
+        T.FINANCING_INFO,
+        T.DUTY_SOURCE,
+        T.PERSON_ID,
+        T.BIZ_FLOW_NO,
+        T.IS_CORPORATION,
+        T.CZJE,
+        case when T.PERSON_TYPE is null then TP.PERSON_TYPE else T.PERSON_TYPE end as PERSON_TYPE,
+        T.UUID,
+        TP.IDCARD_TYPE,
+        TP.IDCARD_NO,
+        TP.NAME,
+        TP.NATION,
+        TP.SEX,
+        TP.BIRTH_DATE,
+        TP.ADDRESS,
+        TP.PHONE,
+        TP.PHOTO,
+        TP.OPER_ID_CARD_NO,
+        TP.STATE,
+        TP.BIZ_FLOW_NO,
+        TP.EMAIL,
+        TP.POLITICAL_STATUS,
+        TP.EDUCATION_DEGREE,
+        TP.CARD_START_DATE,
+        TP.CARD_END_DATE,
+        TP.ACCOUNTID,
+        TP.POST
+        FROM
+        TC_DUTY T LEFT JOIN TC_PERSON_POOL TP ON T.PERSON_ID = TP.ID
+        WHERE 1 = 1
+        <if test="id != null and id != ''">
+            AND t.id = #{id}
+        </if>
+        <if test="dutyTypeName != null and dutyTypeName != ''">
+            AND t.duty_type_name = #{dutyTypeName}
+        </if>
+        <if test="dutyName != null and dutyName != ''">
+            AND t.duty_name = #{dutyName}
+        </if>
+        <if test="duty != null and duty != ''">
+            AND t.duty = #{duty}
+        </if>
+        <if test="dutyType != null and dutyType != ''">
+            AND t.duty_type = #{dutyType}
+        </if>
+        <if test="year != null and year != ''">
+            AND t.year = #{year}
+        </if>
+        <if test="appointedType != null and appointedType != ''">
+            AND t.appointed_type = #{appointedType}
+        </if>
+        <if test="dutySource != null and dutySource != ''">
+            AND t.duty_source = #{dutySource}
+        </if>
+        <if test="isCorporation != null and isCorporation != ''">
+            AND t.is_corporation = #{isCorporation}
+        </if>
+        <if test="startDate != null and startDate != ''">
+            AND t.start_date = #{startDate}
+        </if>
+        <if test="endDate != null and endDate != ''">
+            AND t.end_date = #{endDate}
+        </if>
+        <if test="personId != null and personId != ''">
+            AND t.person_id = #{personId}
+        </if>
+        <if test="bizFlowNo != null and bizFlowNo != ''">
+            AND t.biz_flow_no = #{bizFlowNo}
+        </if>
+        <if test="financingInfo  != null and financingInfo  != ''">
+            AND t.financing_info  = #{financingInfo}
+        </if>
+        <if test="idcardType != null and idcardType != ''">
+            AND tp.idcard_type = #{idcardType}
+        </if>
+        <if test="idcardNo != null and idcardNo != ''">
+            AND tp.idcard_no = #{idcardNo}
+        </if>
+        <if test="name != null and name != ''">
+            AND tp.name = #{name}
+        </if>
+        <if test="nation != null and nation != ''">
+            AND tp.nation = #{nation}
+        </if>
+        <if test="sex != null and sex != ''">
+            AND tp.sex = #{sex}
+        </if>
+        <if test="birthDate != null and birthDate != ''">
+            AND tp.birth_date = #{birthDate}
+        </if>
+        <if test="address != null and address != ''">
+            AND tp.address = #{address}
+        </if>
+        <if test="phone != null and phone != ''">
+            AND tp.phone = #{phone}
+        </if>
+        <if test="photo != null and photo != ''">
+            AND tp.photo = #{photo}
+        </if>
+        <if test="operIdCardNo != null and operIdCardNo != ''">
+            AND tp.oper_id_card_no = #{operIdCardNo}
+        </if>
+        <if test="state != null and state != ''">
+            AND tp.state = #{state}
+        </if>
+        <if test="email != null and email != ''">
+        	AND tp.email = #{email}
+    	</if>
+    </select>
+    <!-- 银行下拉 -->
+    <select id="selectByType" parameterType="map" resultType="map">
+   	 	SELECT CODE,CODE_NAME,PARENT_CODE FROM T_BANK_CODE WHERE PARENT_CODE = #{selectType}
+    </select>
+    
+    <!-- 中国银行贷款信息存储 -->
+    <select id="selectChinaBankdk" parameterType="map" resultType="map">
+   	 	select  *  from  T_BANK_ZG_DK
+   	 	where BIZ_FLOW_NO = #{biz_flow_no}
+    </select>
+    <!-- 中国银行贷款信息存储 -->
+    <delete id="deleteChinaBankdk" parameterType="map">
+   	 	delete  from  T_BANK_ZG_DK
+   	 	where BIZ_FLOW_NO = #{biz_flow_no}
+    </delete>
+    <!--  -->
+    <insert id="insertChinaBankdk" parameterType="map">
+   	 	INSERT INTO T_BANK_ZG_DK
+   	 		  (ID,BIZ_FLOW_NO,XFJED,PHJED,GROUP1,GROUP2,GROUP3,GROUP41,GROUP42,GROUP43,GROUP44,GROUP45,GROUP46,GROUP5,GROUP6,GDZC,SPF,SP,GYTD,GZ,BS,XQMC,XQ,CREATETIME,CREATE_USER)
+   	 	VALUES(#{id},#{biz_flow_no},#{xfjed},#{phjed},#{group1},#{group2},#{group3},#{group41},#{group42},#{group43},#{group44},#{group45},#{group46},#{group5},#{group6},#{gdzc},#{spf},#{sp},#{gytd},#{gz},#{bs},#{xqmc},#{xq},NOW(),#{create_user})
+    </insert>
+    
+    <!-- 开户信息存储 -->
+    <insert id="insertChinaBankOpen" parameterType="map">
+   	 	INSERT INTO T_BANK_ZG_OPENACCOUNT
+   	 		  (ID,KLZHZL,LKHYHJGH,JBZMWJLX,JBZMWJH,DWMC,DWDZ1,DWDZ2,DWDZ3,DWDZ4,DWDZYB,DWDH,ZCDYB,SFSSGS,CKRLB,HYFL,QYLX,BIZ_FLOW_NO,CREATETIME)
+   	 	VALUES(#{id},#{klzhzl},#{lkhyhjgh},#{jbzmwjlx},#{jbzmwjh},#{dwmc},#{dwdz1},#{dwdz2},#{dwdz3},#{dwdz4},#{dwdzyb},#{dwdh},#{zcdyb},#{sfssgs},#{ckrlb},#{hyfl},#{qylx},#{biz_flow_no},)
+    </insert>
+    
+    <!-- 中国银行授权业务 -->
+    <insert id="insertChinaBankSq" parameterType="map">
+   	 	INSERT INTO T_BANK_ZG_SQYW
+   	 		  (ID,PERSONID,A,B,C,D,E,F,G,H,I,HZ,SUM,OPENACCOUNTID,WYDZR,YJDZR,CK,DXJSR,DZHDX,WYJBR,WYSQR,CREATETIME,SQRLX,WY,A_TYPE,C_TYPE,D_TYPE)
+   	 	VALUES(#{id},#{personid},#{A},#{B},#{C},#{D},#{E},#{F},#{G},#{H},#{I},#{hz},#{sum},#{openaccountid},#{wydzr},#{yjdzr},#{ck},#{dxjsr},#{dzhdx},#{wyjbr},#{wysqr},,#{sqrlx},#{wy},#{A_TYPE},#{C_TYPE},#{D_TYPE})
+    </insert>
+    
+    <!-- 更新开户信息存储 -->
+    <update id="updateChinaBankOpen" parameterType="map">
+   	 	update T_BANK_ZG_OPENACCOUNT
+   	 	set	 DWDH = #{dwdh},
+   	 		 SFSSGS = #{sfssgs},
+   	 		 HYFL = #{hyfl},
+   	 		 QYLX = #{qylx}
+   	 	WHERE BIZ_FLOW_NO = #{biz_flow_no}
+    </update>
+    <!-- 更新中国银行授权业务 -->
+    <update id="updateChinaBankSq" parameterType="map">
+   	 	update  T_BANK_ZG_SQYW
+   	 	SET (PERSONID,A,B,C,D,E,F,G,H,I,HZ,SUM,OPENACCOUNTID,WYDZR,YJDZR,CK,DXJSR,DZHDX,WYJBR,WYSQR,CREATETIME,SQRLX)
+   	 	=(select #{personid},#{A},#{B},#{C},#{D},#{E},#{F},#{G},#{H},#{I},#{hz},#{sum},#{openaccountid},#{wydzr},#{yjdzr},#{ck},#{dxjsr},#{dzhdx},#{wyjbr},#{wysqr},,#{sqrlx} from dual)
+   	 	WHERE id = #{id} and sqlx = #{sqrlx}
+    </update>
+    
+    <!-- 查询银行开户信息 -->
+    <select id="chinaBankOpenApply" parameterType="map" resultType="map">
+   	 	SELECT A.* FROM T_BANK_ZG_OPENACCOUNT A
+   	 	WHERE A.BIZ_FLOW_NO = #{biz_flow_no} 
+    </select>
+    
+    <!-- 删除银行开户信息 -->
+    <delete id="deleteChinaBankOpen" parameterType="map" >
+   	 	DELETE FROM  T_BANK_ZG_OPENACCOUNT
+   	 	WHERE BIZ_FLOW_NO = #{biz_flow_no} 
+    </delete>
+    
+    <!-- 删除银行授权信息 -->
+    <delete id="deleteChinaBankOpenSq" parameterType="map" >
+   	 	DELETE FROM  T_BANK_ZG_SQYW
+   	 	WHERE OPENACCOUNTID = #{openaccountid} 
+   	 	<if test="sqrlx != null and sqrlx != ''">
+        	AND SQRLX = #{sqrlx}
+    	</if>
+    </delete>
+    
+    <!-- 查询授权信息 -->
+    <select id="selectChinaBankOpenSq" parameterType="map" resultType="map" >
+   	 	SELECT * FROM  T_BANK_ZG_SQYW
+   	 	WHERE OPENACCOUNTID = #{openaccountid} 
+   	 	<if test="sqrlx != null and sqrlx != ''">
+        	AND SQRLX = #{sqrlx}
+    	</if>
+    </select>
+    
+    <!-- 删除银行授权信息 -->
+    <update id="updateOpenAccount" parameterType="map" >
+   	 	UPDATE  T_BANK_ZG_OPENACCOUNT
+   	 	SET
+   	 	<if test="bankzh != null and bankzh != ''">
+        	BANKZH = #{bankzh},
+    	</if>
+   	 	<if test="bankcheckno != null and bankcheckno != ''">
+        	BANKCHECKNO = #{bankcheckno},
+    	</if>
+   	 	<if test="bankcano != null and bankcano != ''">
+        	BANKCANO = #{bankcano},
+    	</if>
+	   	BIZ_FLOW_NO = #{biz_flow_no}   
+   	    WHERE BIZ_FLOW_NO = #{biz_flow_no}
+    </update>  
+    <!-- 查询银行开户授权信息 -->
+    <select id="chinaBankOpenSq" parameterType="map" resultType="map">
+        SELECT T.SQRLX,ifnull(T.HZ,'') HZ,T.SUM,T.PERSONID,t.OPENACCOUNTID,t.WYDZR,t.YJDZR,t.CK,t.DXJSR,t.DZHDX,t.WYJBR,t.WYSQR,ifnull(T.A,0) A,ifnull(T.B,0) B,ifnull(T.C,0) C,ifnull(T.D,0) D,ifnull(T.E,0) E,ifnull(T.F,0) F,ifnull(T.G,0) G,ifnull(T.H,0) H,ifnull(T.I,0) I,Z.*
+   	 	FROM T_BANK_ZG_SQYW T
+   	 	LEFT JOIN  TC_PERSON_POOL  Z ON  T.PERSONID = Z.ID
+   	 	WHERE 1=1
+   	 	<if test="openaccountid != null and openaccountid != ''">
+            AND T.OPENACCOUNTID = #{openaccountid}
+        </if>
+	 	<if test="A != null and A != ''">
+            AND A = #{A}
+        </if>
+	 	<if test="B != null and B != ''">
+            AND B = #{B}
+        </if>
+	 	<if test="C != null and C != ''">
+            AND C = #{C}
+        </if>
+	 	<if test="D != null and D != ''">
+            AND D = #{D}
+        </if>
+	 	<if test="E != null and E != ''">
+            AND E = #{E}
+        </if>
+	 	<if test="F != null and F != ''">
+            AND F = #{F}
+        </if>
+	 	<if test="G != null and G != ''">
+            AND G = #{G}
+        </if>
+	 	<if test="H != null and H != ''">
+            AND H = #{H}
+        </if>
+	 	<if test="I != null and I != ''">
+            AND I = #{I}
+        </if>
+    </select>
+
+	<select id="selectZGYH" parameterType="String" resultType="map">
+		select t.qylx,t.hyfl,t.bankzh,t.bankcheckno,t.bankcano from T_BANK_ZG_OPENACCOUNT t where t.biz_flow_no=#{id}
+	
+	</select>
+	
+	<select id="getDZR" parameterType="java.lang.String" resultType="map">
+		select  name , phone
+			  from tc_person_pool
+			 where id in (select distinct t1.personid
+			                from t_bank_zg_openaccount t
+			                left join T_BANK_ZG_SQYW t1
+			                  on t.id = t1.openaccountid
+			               where t1.wydzr is not null
+			                 and t.biz_flow_no = #{_parameter})
+	</select>
+	
+	<select id="getCKR" parameterType="map" resultType="map">
+		select name, phone, idcard_no
+			  from tc_person_pool
+			 where id = (select distinct t1.personid
+			               from t_bank_zg_openaccount t
+			               left join T_BANK_ZG_SQYW t1
+			                 on t.id = t1.openaccountid
+			              where t.biz_flow_no = #{id}
+		                	and t1.ck = #{ckType})
+	</select>
+	
+	<select id="getDXJSR" parameterType="map" resultType="map">
+		select name, phone, idcard_no
+			  from tc_person_pool
+			 where id = (select distinct t1.personid
+			               from t_bank_zg_openaccount t
+			               left join T_BANK_ZG_SQYW t1
+			                 on t.id = t1.openaccountid
+			              where t.biz_flow_no = #{id}
+		                	and t1.dxjsr = #{dxjsr})
+	</select>
+	
+	<!-- 网银经办或授权  -->
+	<select id="getWy" parameterType="map" resultType="map">
+		select t.hz,t.sum,t2.name,t2.idcard_type,t2.phone,t2.idcard_no,t.wy
+        from T_BANK_ZG_SQYW t
+        left join t_Bank_Zg_Openaccount t1 on t.openaccountid = t1.id
+        left join TC_PERSON_POOL t2 on t.personid = t2.id 
+        where  t1.biz_flow_no = #{id}   AND t.SQRLX = #{sqrlx}
+	</select>
+	
+	<select id="getYHXX" parameterType="java.lang.String" resultType="map">
+			select t1.byzd1 CODE,t1.name CODE_NAME,t1.byzd2 HH
+                from t_bank_zg_openaccount t
+                left join TB_DEVICE_NETWORK t1
+                  on t.lkhyhjgh = t1.byzd1
+               where t.biz_flow_no = #{_parameter}
+      </select>
+
+	<select id="selectDzrs" parameterType="String" resultType="map">
+		SELECT * FROM T_BANK_ZG_OPENACCOUNT A
+		LEFT JOIN T_BANK_ZG_SQYW B ON A.ID = B.OPENACCOUNTID
+   	 	WHERE A.BIZ_FLOW_NO = #{_parameter} AND WYDZR = '1'
+	</select>
+	
+	<!-- 更新银行机构 -->
+    <update id="updateChinaBankJg" parameterType="map">
+        update T_BANK_ZG_OPENACCOUNT
+        set  LKHYHJGH = #{lkhyhjgh}
+        WHERE BIZ_FLOW_NO = #{biz_flow_no}
+    </update>
+    
+	<!-- 查询授权人不能三人相同 -->
+    <select id="selectSqr" parameterType="String" resultType="map">
+        select distinct t1.personid
+        from t_bank_zg_openaccount t
+        left join T_BANK_ZG_SQYW t1
+          on t.id = t1.openaccountid
+        WHERE t.BIZ_FLOW_NO = #{_parameter}
+    </select>
+</mapper>

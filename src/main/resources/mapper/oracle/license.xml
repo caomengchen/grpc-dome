@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.license">
+
+	<update id="updateZZinfo" parameterType="com.ctd.bank.business.model.LicenseInfoModel">
+		update tc_license_info t set 
+			corp_name=#{corp_name},
+			usid=#{USID},
+			jbr=#{jbr},
+			jbr_phone=#{jbr_phone},
+			status=#{status},
+			update_time=now(),
+			print_date=now(),
+			ACCEPT_ID = #{acceptId},
+			APPLY_TYPE = #{applyType}
+			where original_number=#{original_number}
+	</update>
+
+	<update id="syncLicenseInfo" parameterType="com.ctd.bank.business.model.LicenseInfoModel">
+		update tc_license_info t set
+			corp_name=#{corp_name},
+			usid=#{USID},
+			jbr=#{jbr},
+			jbr_phone=#{jbr_phone},
+			status=#{status},
+			update_time=now(),
+			print_date=#{print_date},
+			ACCEPT_ID = #{acceptId},
+			APPLY_TYPE = #{applyType}
+			where original_number=#{original_number}
+	</update>
+
+
+
+    <update id="updateLicense" parameterType ="com.ctd.bank.business.model.LicenseInfoModel">
+        update TC_LICENSE_INFO t set t.bank_card_no = #{bankCardNo},t.bank_account_no  = #{bankAccountNo},t.update_time=now()  where usid = #{usid}
+    </update>
+    
+    
+    <update id="updateLicenseStatus" parameterType ="com.ctd.bank.business.model.LicenseInfoModel">
+        update TC_LICENSE_INFO t set t.status  = #{status},t.update_time=now()  where t.original_Number = #{originalNumber}
+    </update>
+	<update id="updateLicenseStatusFbbh" parameterType ="com.ctd.bank.business.model.LicenseInfoModel">
+        update TC_LICENSE_INFO t set t.status  = #{status},t.update_time=now()  where t.duplicate_number = #{duplicateNumber}
+    </update>
+    <select id="getByZbbh" parameterType="com.ctd.bank.business.model.LicenseInfoModel" resultType="com.ctd.bank.business.model.LicenseInfoModel">
+		    select  * from TC_LICENSE_INFO l 
+            LEFT JOIN TB_DEVICE_INFO n on l.NETWORK_CODE  =  n.NETWORK_ID
+			<where>
+			     1=1
+				<if test="devId!='' and devId!=null">
+					and n.id =#{devId}
+				</if>
+				<if test="originalNumber!='' and originalNumber!=null">
+					and l.ORIGINAL_NUMBER =#{originalNumber}
+				</if>
+				<if test="duplicateNumber!='' and duplicateNumber!=null">
+					and l.duplicate_number =#{duplicateNumber}
+				</if>
+			</where>
+			
+			
+			
+	</select>
+
+	<!-- 根据执照状态查询执照 -->
+	<select id="getLicensesByStatus" parameterType="com.ctd.bank.business.model.LicenseInfoModel" resultType="com.ctd.bank.business.model.LicenseInfoModel">
+		select  * from TC_LICENSE_INFO l
+		<where>
+			1=1
+			<if test="status!='' and status!=null">
+				and l.status =#{status}
+			</if>
+		</where>
+	</select>
+
+	<select id="getCorpInfoByzzcode" parameterType="com.ctd.bank.business.model.ApplyInfoModel" resultType="com.ctd.bank.business.model.ApplyInfoModel">
+		select * from TC_COMPANY_INFO t
+		<where>
+			1=1
+			<if test="zbarCode!='' and zbarCode!=null">
+				and t.zbarcode =#{zbarCode}
+			</if>
+		</where>
+	</select>
+
+
+</mapper>

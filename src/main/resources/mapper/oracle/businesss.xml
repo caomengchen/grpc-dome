@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.businesss">
+
+    <select id="selectBusiness" parameterType="com.ctd.bank.business.model.NyBankOpeNacCount" resultType="com.ctd.bank.business.model.NyBankOpeNacCount">
+      SELECT    B.*
+      FROM TC_COMPANY_INFO   T
+      LEFT JOIN  t_bank_ny_openaccount  B
+      ON  T.ID=B.BIZ_FLOW_NO
+      WHERE   B.BIZ_FLOW_NO=#{bizflowno}
+    </select>
+
+    <update id="updateBusiness"  parameterType="com.ctd.bank.business.model.NyBankOpeNacCount">
+        UPDATE  t_bank_ny_openaccount
+        SET
+        <if test="uniqueId != null and uniqueId != ''">
+            uniqueId = #{uniqueId},
+        </if>
+        <if test="responseId != null and responseId != ''">
+            responseId = #{responseId},
+        </if>
+        <if test="resCode != null and resCode != ''">
+            resCode = #{resCode}
+        </if>
+        WHERE BIZ_FLOW_NO = #{BIZ_FLOW_NO}
+    </update>
+
+</mapper>
