@@ -1,0 +1,8 @@
+server:
+  port: 9010
+spring:
+  grpc:
+    enable: true
+    port: 6565
+  application:
+    name: dome-2
